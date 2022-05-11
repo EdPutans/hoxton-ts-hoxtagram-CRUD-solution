@@ -1,20 +1,22 @@
 // write your code here
 
+import { Card, Comment } from "./types";
+
 const MAIN_URL = "http://localhost:3000/";
 
-const getPicture = () => {
+const getPicture = (): void => {
   fetch(MAIN_URL + "images")
     .then((resp) => resp.json())
     .then(renderCards);
 };
 
-const renderCards = (cardsArr) => {
+const renderCards = (cardsArr: Card[]): void => {
   for (const card of cardsArr) {
     renderCard(card);
   }
 };
 
-const renderCard = (card) => {
+const renderCard = (card: Card) => {
   const mainContainer = document.querySelector(".image-container");
 
   mainContainer?.children[0].after(createCard(card));
@@ -22,7 +24,7 @@ const renderCard = (card) => {
 
 //submitting a post
 
-const addPost = (formInput) => {
+const addPost = (formInput: any) => {
   const image = formInput.image.value;
   const title = formInput.title.value;
 
@@ -39,7 +41,7 @@ const addPost = (formInput) => {
 
 //submitting a like
 
-const addLike = (likesSpan, cardId) => {
+const addLike = (likesSpan: HTMLSpanElement, cardId: number) => {
   const newLikes = Number(likesSpan.innerText) + 1;
   fetch(MAIN_URL + "images/" + cardId, {
     method: "PATCH",
@@ -54,7 +56,7 @@ const addLike = (likesSpan, cardId) => {
 
 //submitting a comment
 
-const addComment = (input, cardId, commentsSection) => {
+const addComment = (input: HTMLInputElement, cardId: number, commentsSection: HTMLElement) => {
   const comment = input.value;
   fetch(MAIN_URL + "comments", {
     method: "POST",
@@ -70,7 +72,7 @@ const addComment = (input, cardId, commentsSection) => {
 };
 
 //Create card component
-const createCard = (card) => {
+const createCard = (card: Card) => {
   const mainSection = createImageSection(card);
   const commentsSection = createCardComments(card);
   const commentForm = createCommentForm(card.id, commentsSection);
@@ -80,7 +82,7 @@ const createCard = (card) => {
   return mainSection;
 };
 
-const createImageSection = (card) => {
+const createImageSection = (card: Card) => {
   const mainDiv = document.createElement("div");
   const likesDiv = document.createElement("div");
   const h2 = document.createElement("h2");
@@ -98,7 +100,7 @@ const createImageSection = (card) => {
 
   likesDiv.className = "likes-section";
   likesSpan.className = "likes";
-  likesSpan.innerText = card.likes;
+  likesSpan.innerText = `${card.likes}`;
 
   likesButton.className = "like-button";
   likesButton.innerText = "♥";
@@ -110,7 +112,7 @@ const createImageSection = (card) => {
   return mainDiv;
 };
 
-const createCardComments = (card) => {
+const createCardComments = (card: Card) => {
   const commentsList = document.createElement("ul");
   commentsList.className = "comments";
 
@@ -125,14 +127,14 @@ const createCardComments = (card) => {
   return commentsList;
 };
 
-const createCommentItem = (comment) => {
+const createCommentItem = (comment: Comment): HTMLLIElement => {
   const commentItem = document.createElement("li");
   commentItem.innerText = comment.content;
 
   return commentItem;
 };
 
-const createCommentForm = (cardId, commentsSection) => {
+const createCommentForm = (cardId: number, commentsSection: HTMLElement) => {
   const form = document.createElement("form");
   const input = document.createElement("input");
   const button = document.createElement("button");
@@ -168,6 +170,8 @@ const run = () => {
   //@ts-ignore
   postForm.addEventListener("submit", (ev) => {
     ev.preventDefault();
+    if (!ev.target) return;
+
     addPost(ev.target);
   });
 };
